@@ -1,4 +1,5 @@
 services:
+  # Backend Deployment (FastAPI)
   - type: web
     name: action-recognition-backend
     env: python
@@ -8,10 +9,13 @@ services:
     envVars:
       - key: PORT
         value: 10000
+    repoRoot: backend  # This tells Render to use the backend folder for Python dependencies
 
+  # Frontend Deployment (React)
   - type: static
     name: action-recognition-frontend
     env: node
-    buildCommand: "cd frontend && npm install && npm run build" 
-    staticPublishPath: "frontend/build"
+    buildCommand: "cd frontend && npm install && npm run build"  # Navigate to frontend and run build
+    staticPublishPath: "frontend/build"  # Publish the build folder
     plan: free
+    repoRoot: frontend  # This tells Render to use the frontend folder
