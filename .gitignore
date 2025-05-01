@@ -11,10 +11,6 @@ venv/
 .vscode/
 .idea/
 
-# Model files (from backend)
-best_model.h5
-*.h5
-
 # Node modules (from frontend)
 node_modules/
 

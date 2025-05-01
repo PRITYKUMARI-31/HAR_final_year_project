@@ -12,8 +12,6 @@ venv/
 .idea/
 
 # Models & temp
-best_model.h5
-*.h5
 temp_video.*
 
 # OS files

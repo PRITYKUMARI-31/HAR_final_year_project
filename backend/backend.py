@@ -11,6 +11,18 @@ import os
 from tempfile import NamedTemporaryFile
 import yt_dlp as youtube_dl
 
+import requests
+MODEL_URL = os.getenv("MODEL_URL")
+MODEL_PATH = "best_model.h5"
+
+if not os.path.exists(MODEL_PATH):
+    # download once
+    r = requests.get(MODEL_URL)
+    with open(MODEL_PATH, "wb") as f:
+        f.write(r.content)
+model = tf.keras.models.load_model(MODEL_PATH)
+
+
 # Load .env file
 load_dotenv()
 MODEL_PATH = os.getenv("MODEL_PATH", "best_model.h5")
