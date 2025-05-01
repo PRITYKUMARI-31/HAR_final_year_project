@@ -1,5 +1,3 @@
-# render.yaml (at the root of your my-project folder)
-
 services:
   - type: web
     name: action-recognition-backend
@@ -10,13 +8,10 @@ services:
     envVars:
       - key: PORT
         value: 10000
-    repoRoot: backend
 
   - type: static
     name: action-recognition-frontend
     env: node
-    buildCommand: "npm install && npm run build"
+    buildCommand: "cd frontend && npm install && npm run build"
     staticPublishPath: "frontend/build"
     plan: free
-    repoRoot: frontend
-  
