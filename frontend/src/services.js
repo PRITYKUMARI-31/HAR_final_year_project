@@ -6,6 +6,12 @@ const actionClassMap = {
   2: 'Jumping',
   3: 'Sitting',
   4: 'Standing',
+  5: 'BenchPress',
+  6: 'GolfSwing',
+  7: 'JugglingBalls',
+  8: 'HighJump',
+  9: 'Lunges',
+  10: 'PizzaTossing',
 };
 
 export async function recognizeAction(videoFile) {
