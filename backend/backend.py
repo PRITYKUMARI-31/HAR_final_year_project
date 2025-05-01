@@ -14,8 +14,10 @@ import yt_dlp as youtube_dl
 # Load environment variables (optional if you use .env)
 load_dotenv()
 
+
 # Model path — assumed to be present in /backend directory
-MODEL_PATH = os.getenv("MODEL_PATH", "best_model.h5")
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+MODEL_PATH = os.path.join(BASE_DIR, "best_model.h5")
 if not os.path.exists(MODEL_PATH):
     raise RuntimeError(f"Model not found at {MODEL_PATH}. Please ensure it's added to the backend folder.")
 
