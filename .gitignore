@@ -1,0 +1,33 @@
+# Python artifacts (from backend)
+__pycache__/
+*.py[cod]
+*.egg-info/
+
+# Virtual environments (from backend)
+.env
+venv/
+
+# IDE/editor files
+.vscode/
+.idea/
+
+# Model files (from backend)
+best_model.h5
+*.h5
+
+# Node modules (from frontend)
+node_modules/
+
+# React build files (from frontend)
+build/
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Log files
+*.log
+
+# Temporary files
+*.tmp
+temp_video.*

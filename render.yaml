@@ -1,0 +1,22 @@
+# render.yaml (at the root of your my-project folder)
+
+services:
+  - type: web
+    name: action-recognition-backend
+    env: python
+    buildCommand: "pip install -r backend/requirements.txt"
+    startCommand: "uvicorn backend.backend:app --host 0.0.0.0 --port $PORT"
+    plan: free
+    envVars:
+      - key: PORT
+        value: 10000
+    repoRoot: backend
+
+  - type: static
+    name: action-recognition-frontend
+    env: node
+    buildCommand: "npm install && npm run build"
+    staticPublishPath: "frontend/build"
+    plan: free
+    repoRoot: frontend
+  

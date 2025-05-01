@@ -1,0 +1,21 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+
+# Env & venv
+.env
+venv/
+
+# IDE
+.vscode/
+.idea/
+
+# Models & temp
+best_model.h5
+*.h5
+temp_video.*
+
+# OS files
+.DS_Store
+Thumbs.db
