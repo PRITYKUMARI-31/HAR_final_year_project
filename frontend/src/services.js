@@ -1,4 +1,4 @@
-const API_BASE_URL = process.env.REACT_APP_API_URL || 'http://localhost:8000'; // Match backend URL
+const API_BASE_URL = process.env.REACT_APP_API_URL; // Match backend URL
 
 // Map class index to label
 const actionClassMap = {
