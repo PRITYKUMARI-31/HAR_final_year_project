@@ -5,3 +5,5 @@ opencv-python
 numpy
 yt-dlp
 python-dotenv
+python-multipart
+
