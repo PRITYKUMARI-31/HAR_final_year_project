@@ -11,31 +11,37 @@ import os
 from tempfile import NamedTemporaryFile
 import yt_dlp as youtube_dl
 
-# Load environment variables (optional if you use .env)
+# Load environment variables
 load_dotenv()
 
-
-# Model path — assumed to be present in /backend directory
+# Paths
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 MODEL_PATH = os.path.join(BASE_DIR, "best_model.h5")
-if not os.path.exists(MODEL_PATH):
-    raise RuntimeError(f"Model not found at {MODEL_PATH}. Please ensure it's added to the backend folder.")
+CLASS_NAMES_PATH = os.path.join(BASE_DIR, "class_names.txt")
 
-# Load the model
+# Load model
+if not os.path.exists(MODEL_PATH):
+    raise RuntimeError(f"Model not found at {MODEL_PATH}")
 model = tf.keras.models.load_model(MODEL_PATH)
 print("[INFO] Model loaded successfully.")
+
+# Load class names
+if not os.path.exists(CLASS_NAMES_PATH):
+    raise RuntimeError(f"class_names.txt not found at {CLASS_NAMES_PATH}")
+with open(CLASS_NAMES_PATH, "r") as f:
+    CLASS_NAMES = [line.strip() for line in f.readlines()]
 
 # Constants
 IMAGE_HEIGHT, IMAGE_WIDTH = 64, 64
 SEQUENCE_LENGTH = 20
 
-# Initialize FastAPI app
+# Initialize FastAPI
 app = FastAPI()
 
-# Enable CORS for frontend access
+# Enable CORS
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=["https://action-recognition-frontend.onrender.com"],
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -51,11 +57,11 @@ def health_check():
 async def handle_all_exceptions(request: Request, exc: Exception):
     return JSONResponse(status_code=500, content={"error": "Internal server error", "detail": str(exc)})
 
-# Request body model for YouTube URLs
+# Pydantic model
 class UrlRequest(BaseModel):
     url: str
 
-# Function to extract fixed number of frames
+# Frame extraction
 def extract_frames(video_path: str) -> np.ndarray:
     cap = cv2.VideoCapture(video_path)
     total_frames = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
@@ -73,7 +79,7 @@ def extract_frames(video_path: str) -> np.ndarray:
     cap.release()
     return np.array(frames)
 
-# File upload endpoint
+# Prediction from file
 @app.post("/predict")
 async def predict_action(file: UploadFile = File(...)):
     tmp = NamedTemporaryFile(delete=False)
@@ -85,11 +91,15 @@ async def predict_action(file: UploadFile = File(...)):
             return JSONResponse(status_code=400, content={"error": "Not enough frames extracted from the video."})
         input_tensor = np.expand_dims(frames, axis=0)
         prediction = model.predict(input_tensor)
-        return {"predicted_class": int(np.argmax(prediction))}
+        predicted_index = int(np.argmax(prediction))
+        return {
+            "predicted_class": predicted_index,
+            "label": CLASS_NAMES[predicted_index]
+        }
     finally:
         os.unlink(tmp.name)
 
-# YouTube URL prediction endpoint
+# Prediction from URL
 @app.post("/predict-url")
 async def predict_action_from_url(req: UrlRequest):
     ydl_opts = {
@@ -112,11 +122,15 @@ async def predict_action_from_url(req: UrlRequest):
             return JSONResponse(status_code=400, content={"error": "Not enough frames extracted from the video."})
         input_tensor = np.expand_dims(frames, axis=0)
         prediction = model.predict(input_tensor)
-        return {"predicted_class": int(np.argmax(prediction))}
+        predicted_index = int(np.argmax(prediction))
+        return {
+            "predicted_class": predicted_index,
+            "label": CLASS_NAMES[predicted_index]
+        }
     finally:
         if os.path.exists(video_path):
             os.remove(video_path)
 
-# Entry point for local development (ignored by Render)
+# Local entry
 if __name__ == "__main__":
     uvicorn.run("backend:app", host="0.0.0.0", port=8000, reload=True)
