@@ -38,16 +38,16 @@ SEQUENCE_LENGTH = 20
 # Initialize FastAPI
 app = FastAPI()
 
-# Enable CORS
+# Enable CORS middleware globally
 app.add_middleware(
     CORSMiddleware,
     allow_origins=[
-        "https://action-recognition-frontend.onrender.com",
-        "http://localhost:3000" 
+        "https://action-recognition-frontend.onrender.com",  # Production frontend
+        "http://localhost:3000"  # Local development frontend
     ],
     allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
+    allow_methods=["*"],  # Allow all methods (GET, POST, OPTIONS)
+    allow_headers=["*"],  # Allow all headers (Content-Type, etc.)
 )
 
 # Health check route
@@ -64,7 +64,7 @@ async def handle_all_exceptions(request: Request, exc: Exception):
 class UrlRequest(BaseModel):
     url: str
 
-# Frame extraction
+# Frame extraction function
 def extract_frames(video_path: str) -> np.ndarray:
     cap = cv2.VideoCapture(video_path)
     total_frames = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
@@ -82,7 +82,7 @@ def extract_frames(video_path: str) -> np.ndarray:
     cap.release()
     return np.array(frames)
 
-# Prediction from file
+# Prediction from file upload
 @app.post("/predict")
 async def predict_action(file: UploadFile = File(...)):
     tmp = NamedTemporaryFile(delete=False)
@@ -102,7 +102,7 @@ async def predict_action(file: UploadFile = File(...)):
     finally:
         os.unlink(tmp.name)
 
-# Prediction from URL
+# Prediction from YouTube URL
 @app.post("/predict-url")
 async def predict_action_from_url(req: UrlRequest):
     ydl_opts = {
@@ -134,6 +134,6 @@ async def predict_action_from_url(req: UrlRequest):
         if os.path.exists(video_path):
             os.remove(video_path)
 
-# Local entry
+# Local entry point to run the app
 if __name__ == "__main__":
     uvicorn.run("backend:app", host="0.0.0.0", port=8000, reload=True)
