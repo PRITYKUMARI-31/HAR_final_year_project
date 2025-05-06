@@ -1,17 +1,14 @@
 const API_BASE_URL = process.env.REACT_APP_API_URL;
 
+console.log("API Base URL:", API_BASE_URL);
+
 const actionClassMap = {
-  0: 'Walking',
-  1: 'Running',
-  2: 'Jumping',
-  3: 'Sitting',
-  4: 'Standing',
-  5: 'BenchPress',
-  6: 'GolfSwing',
-  7: 'JugglingBalls',
-  8: 'HighJump',
-  9: 'Lunges',
-  10: 'PizzaTossing',
+  0: 'BenchPress',
+  1: 'GolfSwing',
+  2: 'JugglingBalls',
+  3: 'HighJump',
+  4: 'Lunges',
+  5: 'PizzaTossing',
 };
 
 export async function recognizeAction(videoFile) {
